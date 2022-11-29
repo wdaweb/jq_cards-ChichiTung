@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+  <title>SEVENTEEN Matching Game</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap');
+
+    video {
+      margin: auto;
+    }
+
+    .card {
+      width: 10vh;
+      height: 16vh;
+      position: relative;
+      float: left;
+      margin: 8px;
+      /* 設定子元素在 3D 空間內 */
+      transform-style: preserve-3d;
+      transition: transform 1s;
+      box-shadow: 1px 2px 8px 2px #585858
+    }
+
+    .card-front {
+
+      width: 10vh;
+      height: 16vh;
+      background-image: url('./svt/facethesun/1.JPG');
+      border: 0.25vh solid rgba(138, 138, 138, 0.5);
+      border-radius: 1vh;
+
+      /* 縮放已顯示整張 */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      position: absolute;
+      /* 設定隱藏背面 */
+      backface-visibility: hidden;
+    }
+
+    .card-back {
+      width: 10vh;
+      height: 16vh;
+      /* width: 100%; */
+      /* height: 100%; */
+      background-image: url('./svt/logo_face_the_sun.jfif');
+      background-size: cover;
+      border: 0.15vh solid rgba(138, 138, 138, 0.5);
+      border-radius: 1vh;
+      background-repeat: no-repeat;
+      background-position: center;
+      position: absolute;
+
+      transform: rotateY(180deg);
+      /* 設定隱藏背面 */
+      backface-visibility: hidden;
+    }
+
+    .card-close {
+      transform: rotateY(180deg);
+    }
+
+    body {
+      display: flex;
+      overflow: hidden;
+    }
+
+    video {
+      margin: auto;
+      margin-top: -10px;
+      /* margin-left: -10px; */
+      z-index: -5;
+      width: 100%;
+      height: 100%;
+    }
+
+    .filter {
+      background: rgba(36, 36, 36, 0.5);
+      width: 200%;
+      height: 200%;
+      position: absolute;
+      top: -20%;
+      left: -20%;
+    }
+
+    .title {
+      width: 80vw;
+      height: 10vh;
+      text-align: center;
+      font-size: 3vw;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.1em;
+      word-spacing: 0.3em
+    }
+
+
+    #btn-start {
+      cursor: pointer;
+      width: 10%;
+      height: 5%;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 5%;
+      position: absolute;
+      top: 80%;
+      left: 45%;
+      z-index: 1;
+      /* background: rgba(255, 255, 255, 0.4); */
+      font-family: 'Playfair Display', serif;
+      font-size: 3vh;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      /* box-shadow: 2px 2px 10px #0d0d0d; */
+    }
+
+    #btn-start:hover {
+      border: 1px solid rgba(92, 92, 92, 0.6);
+      background: rgba(255, 255, 255, 0.3);
+      color: rgba(51, 51, 51, 0.8);
+
+      font-weight: 600;
+      transition: all .3s linear;
+      /* box-shadow: 5px 1px 6px #7d7d7d; */
+
+    }
+
+    #game {
+      width: 100vh;
+      height: 80vh;
+      /* background: rgba(233, 236, 236, 0.4); */
+      margin: auto;
+      /* margin-top: 11vh; */
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      position: absolute;
+      top: 50%;
+      left: 30%;
+      transform: translate(-50%, -50%);
+      display: none;
+      /* -moz-animation-delay: 0.2s; */
+      transition: all .5s linear;
+    }
+
+    #intro {
+      width: 80vh;
+      height: 80vh;
+      /* background: rgba(233, 236, 236, 0.4); */
+      margin: auto;
+      /* margin-top: 11vh; */
+      display: flex;
+      position: absolute;
+      top: 7%;
+      left: 55%;
+    }
+
+    #intro::before {
+      content: '';
+      background-image: url(./svt/intro/00.png);
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 10vh;
+      /* height: 20vh; */
+      /* border: #585858 1px solid; */
+      position: absolute;
+      top: 29%;
+      left: 97%;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      display: none;
+    }
+
+    #intro_img {
+      width: 70%;
+      height: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-image: url('');
+      float: left;
+      opacity: 0.8;
+      transition: all 0.3s;
+    }
+
+    .txt {
+      width: 40vh;
+      background: rgba(138, 138, 138, 0.5);
+      color: white;
+      clear: both;
+      position: absolute;
+      top: 32%;
+      right: -8%;
+      padding: 2vh;
+      transition: all 0.3s;
+
+    }
+
+    h2 {
+      font-size: 4vh;
+      font-weight: 800;
+      font-family: 'Noto Serif TC', serif;
+    }
+
+    p {
+      font-size: 3vh;
+      font-weight: 400;
+      font-family: 'Noto Serif TC', serif;
+      margin: 3%;
+    }
+
+    #mute {
+      width: 10%;
+      height: 10%;
+      border-radius: 50%;
+      background: rgb(194 194 194 / 50%);
+      /* float: right; */
+      border: whitesmoke;
+      box-shadow: 2px 2px 10px #333;
+      position: absolute;
+      top: 90%;
+      right: -12%;
+    }
+
+    .txt {
+      display: none;
+    }
+
+    .flip-2-hor-top-1 {
+      -webkit-animation: flip-2-hor-top-1 0.4s cubic-bezier(0.455, 0.030, 0.515, 0.955);
+      animation: flip-2-hor-top-1 0.4s cubic-bezier(0.455, 0.030, 0.515, 0.955);
+    }
+  </style>
+</head>
+
+<body>
+  <video id="#myvideo" autoplay>
+    <source src="./SEVENTEEN (세븐틴) 4th Album 'Face the Sun' Highlight Medley [720p].mp4">
+  </video>
+  <div class="filter"></div>
+  <div id="game">
+    <!-- <audio src="./svt/audio/DON QUIXOTE.mp3" autoplay></audio> -->
+  </div>
+  <div id="intro">
+    <!-- <input type="button" value="靜音" id="mute"> -->
+    <div id="intro_img"></div>
+
+    <!-- <div class="txt_origin">
+      <p>SEVENTEEN = 13個成員+3個分隊+1個團體</p>
+      <p>問候語為「Say the name, SEVENTEEN」</p>
+      <p>出道日期：2015年5月26日</p>
+      <p>官方應援色：Rose Quartz&Serenity（玫瑰石英粉＆寧靜藍）</p>
+      <p>官方粉絲名：CARAT 캐럿 克拉</p>
+    </div> -->
+    <div class="txt ">
+      <h2>Dino 李燦</h2>
+      <p>暱稱：極限忙內、燦尼</p>
+      <P>1999/02/11 水瓶座</P>
+      <P>173cm 56kg</P>
+      <p>國籍：韓國</p>
+      <p>分隊：Performance Team</p>
+      <p>隊內擔當：忙內/領舞/副 Rapper</p>
+    </div>
+
+    <div class="txt ">
+      <h2>S.COUPS 崔勝哲</h2>
+      <p>暱稱：Coups、小公舉、崔又氣</p>
+      <P>1995/08/08 獅子座</P>
+      <P>177cm 66kg</P>
+      <p>國籍：韓國</p>
+      <p>分隊：Hiphop Team</p>
+      <p>隊內擔當：隊長/Hip-hop Team 隊長/ Rapper</p>
+    </div>
+    <div class="txt">
+      <h2>淨漢 Jeong Han<br>尹淨漢</h2>
+      <p>暱稱：天使、運淨漢</p>
+      <P>1995/10/04 天秤座</P>
+      <P>173cm 56kg</P>
+      <p>國籍：韓國</p>
+      <p>分隊：Vocal Team</p>
+      <p>隊內擔當：Vocal</p>
+    </div>
+
+    <div class="txt">
+      <h2>Joshua 洪知秀</h2>
+      <p>暱稱：紳士、刷</p>
+      <P>1995/12/30 摩羯座</P>
+      <P>176cm 63kg</P>
+      <p>國籍：美國</p>
+      <p>分隊：Vocal Team</p>
+      <p>隊內擔當：Vocal</p>
+    </div>
+
+    <div class="txt ">
+      <h2>Jun 文俊輝</h2>
+      <p>暱稱：俊尼、文三歲</p>
+      <P>1996/06/10 雙子座</P>
+      <P>182cm 68kg</P>
+      <p>國籍：中國</p>
+      <p>分隊：Performance Team</p>
+      <p>隊內擔當：領舞</p>
+    </div>
+
+    <div class="txt">
+      <h2>Hoshi 權順榮</h2>
+      <p>暱稱：倉鼠、榮榮、十點十分</p>
+      <P>1996/06/15 雙子座</P>
+      <P>173cm 58kg</P>
+      <p>國籍：韓國</p>
+      <p>分隊：Performance Team 隊長/領舞/編舞</p>
+      <p>隊內擔當：領舞</p>
+    </div>
+
+    <div class="txt">
+      <h2>圓佑 Won Woo <br>全圓佑</h2>
+      <p>暱稱：圓圓、圓又圓、樹懶</p>
+      <P>1996/07/17 巨蟹座</P>
+      <P>180cm 57kg</P>
+      <p>國籍：韓國</p>
+      <p>分隊：Hip-hop Team</p>
+      <p>隊內擔當：Rapper</p>
+    </div>
+
+    <div class="txt">
+      <h2>Woozi 李知勳</h2>
+      <p>暱稱：李老師、烏雞、圈飯妖精</p>
+      <P>1996/11/22 天蠍座</P>
+      <P>164cm 54kg</P>
+      <p>國籍：韓國</p>
+      <p>分隊：Vocal Team</p>
+      <p>隊內擔當：Vocal Team 隊長/Vocal/作曲</p>
+    </div>
+
+    <div class="txt">
+      <h2>The 8 徐明浩</h2>
+      <p>暱稱：小八</p>
+      <P>1996/11/07 天蠍座</P>
+      <P>175cm 53kg</P>
+      <p>國籍：中國</p>
+      <p>分隊：Performance Team</p>
+      <p>隊內擔當：領舞</p>
+    </div>
+
+    <div class="txt">
+      <h2>珉奎 Min Gyu <br>金珉奎</h2>
+      <p>暱稱：珉九、珉主婦、小葵、土土</p>
+      <P>1997/04/06 牡羊座</P>
+      <P>186cm 65kg</P>
+      <p>國籍：韓國</p>
+      <p>分隊：Hip-hop Team</p>
+      <p>隊內擔當：Rapper/門面</p>
+    </div>
+
+    <div class="txt">
+      <h2>DK 李碩珉</h2>
+      <p>暱稱：李索命、淨漢的傻瓜</p>
+      <P>1997/02/18 水瓶座</P>
+      <P>178cm 66kg</P>
+      <p>國籍：韓國</p>
+      <p>分隊：Vocal Team</p>
+      <p>隊內擔當：Vocal</p>
+    </div>
+
+    <div class="txt">
+      <h2>勝寬 Seung Kwan <br>夫勝寬</h2>
+      <p>暱稱：甜甜、MC夫、綜藝小樹苗</p>
+      <P>1998/01/16 魔羯座</P>
+      <P>172cm 58kg</P>
+      <p>國籍：韓國</p>
+      <p>分隊：Vocal Team</p>
+      <p>隊內擔當：主唱</p>
+    </div>
+
+    <div class="txt">
+      <h2>Vernon 崔翰率</h2>
+      <p>暱稱：啵農、小啵、小李奧納多</p>
+      <P>1998/02/18 水瓶座</P>
+      <P>175cm 56kg</P>
+      <p>國籍：韓國/美國</p>
+      <p>分隊：Hip-hop Team</p>
+      <p>隊內擔當：Rapper</p>
+    </div>
+
+
+  </div>
+  <div class="title">
+    SEVENTEEN Matching Game
+  </div>
+  <div id="btn-start">START</div>
+
+  <!-- <div class="card">
+        <div class="card-front"></div>
+        <div class="card-back"></div>
+    </div> -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js'
+    integrity='sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=='
+    crossorigin='anonymous'></script>
+
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- <script src="../jquery-3.6.1.min.js"></script> -->
+  <script>
+
+
+    for (let i = 0; i < 26; i++) {
+      $('#game').append(`
+                <div class= "card card-close">
+                    <div class="card-front"></div>
+                    <div class="card-back"></div>
+                </div>
+            `)
+
+    }
+
+    for (let i = 0; i < $('.card').length; i++) {
+      // 決定數字
+      // const num = i % 8 + 1
+      // const num = i % ($('.card').length / 2) + 1
+
+      const num = i % ($('.card').length) + 1
+      console.log(num)
+
+      if (num < 14) {
+        $('.card').eq(i).find('.card-front').css('background-image', `url(./svt/facethesun/${num}.jpg)`)
+      } else {
+        $('.card').eq(i).find('.card-front').css('background-image', `url(./svt/facethesun_name/${num}.jpg)`)
+      }
+
+      //  資料暫存的指示 data-OOO
+      $('.card').eq(i).attr('data-num', num % 13)
+      $('')
+
+      // 打散
+      const target = Math.round(Math.random() * ($('.card').length - 1))
+      $('.card').eq(target).insertAfter($('.card').eq(i))
+    }
+
+    $('#game').on('click', '.card', function () {
+      // 最多一次翻兩張，且這張牌還沒翻開
+      if ($('.card:not(.card-close)').length < 2 &&
+        $(this).hasClass('card-close') &&
+        !$(this).hasClass('card-ok')
+      ) {
+        $(this).removeClass('card-close')
+      }
+
+      // 如果翻兩張了
+      if ($('.card:not(.card-close)').length === 2) {
+        // 如果數字一樣
+        if ($('.card:not(.card-close)').eq(0).attr('data-num') === $('.card:not(.card-close)').eq(1).attr('data-num')) {
+          // 用 card-ok 標示已完成
+          const index = ($('.card:not(.card-close)').eq(0).attr('data-num'))
+          console.log(index)
+          $('.card:not(.card-close)').addClass('card-ok')
+          $('.card:not(.card-close)').fadeTo(1000, 0)
+
+          $('#intro_img').css('background-image', `url(./svt/intro/${index}.jpeg)`).addClass('animate__fadeInLeft').addClass('animated')
+          $('.txt_origin').hide()
+          $('.txt').hide()
+          $('.txt').eq(index).show()
+          $('.txt').eq(index).addClass('animate__fadeInRight').addClass('animated')
+          $('#intro::before').show()
+
+        }
+
+
+        // 不管數字一不一樣都將卡片翻回來
+        setTimeout(() => {
+          $('.card:not(.card-close)').addClass('card-close')
+          if ($('.card-ok').length === $('.card').length) {
+            Swal.fire({
+              icon: 'Success',
+              title: '恭喜克拉小仙子過關',
+              text: '相信你對小17一定更認識了!'
+            })
+          }
+        }, 1000)
+      }
+    })
+
+    const video = $('#myvideo')
+    $('#btn-start').click(function () {
+      // 停用開始按鈕
+      // $(this).attr('disabled', true)
+
+      // 開始按鈕 消失
+      // video.play()
+      $(this).hide()
+      $('.title').hide()
+      $('#game').show()
+    })
+
+    $('#mute').on('click', function () {
+
+      if ($(this).attr('aria-pressed', 'false')) {
+        $(this).attr('aria-pressed', 'true')
+        video.muted(true)
+      } else {
+        $(this).attr('aria-pressed', 'false')
+      }
+
+      console.log($(this).attr('aria-pressed'))
+    })
+  </script>
+</body>
+
+</html>
